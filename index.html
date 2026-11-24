@@ -3,13 +3,13 @@
 .csv-tools{border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0;background:#f8fafc}.csv-tools p{margin:7px 0 12px}.csv-tools button,.csv-upload{display:inline-block;vertical-align:middle;width:auto;margin:4px 8px 4px 0;padding:11px 14px;border-radius:9px;border:1px solid #cbd5e1;background:white;color:#17365d;font-weight:600;cursor:pointer;font-size:14px}.csv-upload input{display:none}@media(max-width:600px){.csv-tools button,.csv-upload{display:block;width:100%;text-align:center;margin:8px 0}}
 .next-event{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #e2e8f0}.next-event button{width:auto;white-space:nowrap}.guided{border-left:5px solid #2563eb}@media(max-width:600px){.next-event{align-items:flex-start}.next-event button{padding:10px}}
 .receipt-picker{display:inline-block;background:#eaf2fc;border:1px solid #9ab9e2;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:650}.receipt-picker{position:relative;overflow:hidden}.receipt-picker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px}.receipt-gallery{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.receipt-card{width:160px;border:1px solid #ccd7e3;border-radius:10px;padding:10px;background:white;overflow-wrap:anywhere}.receipt-card img{max-width:100%;height:170px;object-fit:contain}.receipt-card button{margin-top:8px}@media(max-width:600px){.receipt-picker{width:100%;text-align:center}.receipt-card{width:calc(50% - 6px)}}.att-scroll{max-height:70vh}.att-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0}.att-table th,.att-table td{text-align:center;min-width:80px;border-right:1px solid #e8eef4}.att-table thead th{position:sticky;top:0;z-index:2;background:#eaf2f8}.att-table .att-name{position:sticky;left:0;z-index:1;min-width:135px;max-width:200px;text-align:left;background:#f6f9fc;white-space:normal}.att-table thead .att-name{z-index:3;background:#eaf2f8}.att-table .att-small{font-size:10px;font-weight:normal;color:#637c8f}.att-table .att-state{font-weight:750;font-size:17px}.att-table .att-yes{color:#16734a;background:#f0faf4}.att-table .att-no{color:#a34b4b;background:#fff6f5}.att-table .att-maybe{color:#986b17;background:#fffbec}.att-table .att-other{color:#8a99a5}.att-table .att-total{font-weight:750}.att-table .att-summary th,.att-table .att-summary td{background:#eef4f9;font-weight:750}.att-table .att-summary .att-name{z-index:1;background:#e8f0f7}.att-date{max-width:130px;white-space:normal}
-/* Ver.2.32: only the member name remains fixed during horizontal scrolling. */
+/* Ver.2.33: only the member name remains fixed during horizontal scrolling. */
 .att-table .att-meta{min-width:65px;white-space:nowrap;text-align:left;background:#fff;}
 .att-table .att-role{min-width:160px;}
 .att-table thead .att-meta{background:#eaf2f8;}
 .att-table .att-summary .att-meta{background:#e8f0f7;}
 .att-table .att-name{left:0;position:sticky;}
-</style></head><body><header><h1>委員会懇親会管理 <small>Ver.2.32</small></h1><small>日程調整から精算まで、ひとつに。</small></header><main><nav id="nav" aria-label="メインメニュー"></nav><div id="app"></div><footer>委員会懇親会管理 · データはこの端末内に保存されます。自動バックアップはブラウザ内に保存されます。外部にも退避してください。</footer></main><script>
+</style></head><body><header><h1>委員会懇親会管理 <small>Ver.2.33</small></h1><small>日程調整から精算まで、ひとつに。</small></header><main><nav id="nav" aria-label="メインメニュー"></nav><div id="app"></div><footer>委員会懇親会管理 · データはこの端末内に保存されます。自動バックアップはブラウザ内に保存されます。外部にも退避してください。</footer></main><script>
 'use strict';const KEY='konshinkai_v1';const yen=n=>(Number(n)||0).toLocaleString('ja-JP')+'円';const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const uid=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();const currentFY=()=>{let d=new Date();return d.getFullYear()-(d.getMonth()<9?1:0)};function seed(y){return {year:y,budget:0,events:[],members:[],venues:[]}}let db;try{db=JSON.parse(localStorage.getItem(KEY))}catch{}if(!db||!Array.isArray(db.events))db=seed(currentFY());if(!db.fiscalVersion){
  const oldPattern=db.events.length===12 && db.events[0].month===4 && db.events[3].month===7;
  if(oldPattern){
@@ -177,13 +177,16 @@ function printDocument(title,body){
  w.document.write(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:system-ui,'Yu Gothic',sans-serif;color:#17253a;margin:36px auto;max-width:780px;line-height:1.6}h1{font-size:22px;border-bottom:3px solid #1e527e;padding-bottom:12px}h2{font-size:15px;margin-top:24px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #b9c6d4;padding:9px;text-align:left;font-size:13px}th{background:#edf3f8;width:26%}.note{color:#526176;font-size:12px}.signature{text-align:right;margin:18px 0}@media print{body{margin:12mm}button{display:none}}.next-event{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #e2e8f0}.next-event button{width:auto;white-space:nowrap}.guided{border-left:5px solid #2563eb}@media(max-width:600px){.next-event{align-items:flex-start}.next-event button{padding:10px}}
 </style></head><body>${body}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),300);
 }
+function sortedAttendanceMembers(att){
+ const order=m=>m.executiveRole==='委員長'?0:m.executiveRole==='副委員長'?2:1;
+ const termOrder=m=>{const t=String(m.term??'').normalize('NFKC').match(/\d+/);return t?Number(t[0]):Infinity};
+ return att.slice().sort((a,b)=>order(a)-order(b)||(termOrder(a)-termOrder(b))||String(a.name).localeCompare(String(b.name),'ja'));
+}
 function printAttendanceList(){
  const e=event();if(!e){alert('開催を選択してください');return}
  const v=db.venues.find(x=>x.id===e.venueId),att=joined(e);
  if(att.length>20&&!confirm(`出席者は${att.length}名です。A4縦1枚は20名までを想定しています。続けますか？`))return;
- const order=m=>m.executiveRole==='委員長'?0:m.executiveRole==='副委員長'?2:1;
- const termOrder=m=>{const t=String(m.term??'').normalize('NFKC').match(/\d+/);return t?Number(t[0]):Infinity};
- const members=att.slice().sort((a,b)=>order(a)-order(b)||(termOrder(a)-termOrder(b))||String(a.name).localeCompare(String(b.name),'ja'));
+ const members=sortedAttendanceMembers(att);
  const group=m=>m.executiveRole==='委員長'?'委員長':m.executiveRole==='副委員長'?'副委員長':'';
  const rows=members.map(m=>`<tr><td class="role">${esc(group(m))}</td><td>${esc(m.name)}</td><td>${esc(m.company||m.note||'')}</td><td class="term">${m.term?esc(m.term)+'期':''}</td></tr>`).join('');
  const date=e.date?e.date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,(_,y,m,d)=>`${y}年${Number(m)}月${Number(d)}日`):'　年　月　日';
@@ -261,7 +264,7 @@ async function buildMeetingReportHtml(){
  const nameInput=$('reportMeetingName'),purposeInput=$('reportMeetingPurpose');
  if(nameInput){e.meetingName=nameInput.value.trim();e.meetingPurpose=purposeInput?.value.trim()||'';if($('reportRemarks'))e.reportRemarks=$('reportRemarks').value.trim();if(!save())return}
  if(!String(e.paidBy||'').trim()){alert('責任者名に反映する立替者名を入力し、「精算情報を保存」してください。');paidInput?.focus();return}
- const v=db.venues.find(x=>x.id===e.venueId),att=joined(e),cost=+e.cost||0;
+ const v=db.venues.find(x=>x.id===e.venueId),att=sortedAttendanceMembers(joined(e)),cost=+e.cost||0;
  const bank=[db.bankBranch||'',(db.bankType||'普通')+' '+(db.bankNumber||''),db.bankHolder||'',db.bankPhone||''].map(x=>esc(x)).join('<div></div>');
  const rows=[['会合名',e.meetingName??(e.type+' 懇親会')],['会合の目的',e.meetingPurpose??(e.type+'委員の懇親')],['開催日',e.date||''],['参加者',att.map(m=>m.name+'（'+(m.company||m.note||'')+'）').join('、')],['責任者名',e.paidBy||''],['開催場所',v?.name||''],['支払い総額',yen(cost)],['振込口座',bank],['備考',e.reportRemarks||'']];
  let receipts=[];try{receipts=await getReceipts(e.id)}catch(err){alert('領収書の読み込みに失敗しました：'+err.message);return}
@@ -316,7 +319,7 @@ async function addReceipts(files){
 }
 async function deleteReceipt(id){if(!confirm('この領収書を削除しますか？'))return;const d=await receiptDB();await new Promise((resolve,reject)=>{const t=d.transaction(RECEIPT_STORE,'readwrite');t.objectStore(RECEIPT_STORE).delete(id);t.oncomplete=resolve;t.onerror=()=>reject(t.error)});d.close();refreshReceiptGallery()}
 
-// 領収書のOCR・確認・合計反映（Ver.2.32）
+// 領収書のOCR・確認・合計反映（Ver.2.33）
 async function updateReceiptFields(id,fields,verified){
  const d=await receiptDB();try{await new Promise((resolve,reject)=>{
   const tx=d.transaction(RECEIPT_STORE,'readwrite'),st=tx.objectStore(RECEIPT_STORE),req=st.get(id);
