@@ -3,13 +3,13 @@
 .csv-tools{border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0;background:#f8fafc}.csv-tools p{margin:7px 0 12px}.csv-tools button,.csv-upload{display:inline-block;vertical-align:middle;width:auto;margin:4px 8px 4px 0;padding:11px 14px;border-radius:9px;border:1px solid #cbd5e1;background:white;color:#17365d;font-weight:600;cursor:pointer;font-size:14px}.csv-upload input{display:none}@media(max-width:600px){.csv-tools button,.csv-upload{display:block;width:100%;text-align:center;margin:8px 0}}
 .next-event{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #e2e8f0}.next-event button{width:auto;white-space:nowrap}.guided{border-left:5px solid #2563eb}@media(max-width:600px){.next-event{align-items:flex-start}.next-event button{padding:10px}}
 .receipt-picker{display:inline-block;background:#eaf2fc;border:1px solid #9ab9e2;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:650}.receipt-picker{position:relative;overflow:hidden}.receipt-picker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px}.receipt-gallery{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.receipt-card{width:160px;border:1px solid #ccd7e3;border-radius:10px;padding:10px;background:white;overflow-wrap:anywhere}.receipt-card img{max-width:100%;height:170px;object-fit:contain}.receipt-card button{margin-top:8px}@media(max-width:600px){.receipt-picker{width:100%;text-align:center}.receipt-card{width:calc(50% - 6px)}}.att-scroll{max-height:70vh}.att-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0}.att-table th,.att-table td{text-align:center;min-width:80px;border-right:1px solid #e8eef4}.att-table thead th{position:sticky;top:0;z-index:2;background:#eaf2f8}.att-table .att-name{position:sticky;left:0;z-index:1;min-width:135px;max-width:200px;text-align:left;background:#f6f9fc;white-space:normal}.att-table thead .att-name{z-index:3;background:#eaf2f8}.att-table .att-small{font-size:10px;font-weight:normal;color:#637c8f}.att-table .att-state{font-weight:750;font-size:17px}.att-table .att-yes{color:#16734a;background:#f0faf4}.att-table .att-no{color:#a34b4b;background:#fff6f5}.att-table .att-maybe{color:#986b17;background:#fffbec}.att-table .att-other{color:#8a99a5}.att-table .att-total{font-weight:750}.att-table .att-summary th,.att-table .att-summary td{background:#eef4f9;font-weight:750}.att-table .att-summary .att-name{z-index:1;background:#e8f0f7}.att-date{max-width:130px;white-space:normal}
-/* Ver.2.26: only the member name remains fixed during horizontal scrolling. */
+/* Ver.2.27: only the member name remains fixed during horizontal scrolling. */
 .att-table .att-meta{min-width:65px;white-space:nowrap;text-align:left;background:#fff;}
 .att-table .att-role{min-width:160px;}
 .att-table thead .att-meta{background:#eaf2f8;}
 .att-table .att-summary .att-meta{background:#e8f0f7;}
 .att-table .att-name{left:0;position:sticky;}
-</style></head><body><header><h1>委員会懇親会管理 <small>Ver.2.26</small></h1><small>日程調整から精算まで、ひとつに。</small></header><main><nav id="nav" aria-label="メインメニュー"></nav><div id="app"></div><footer>委員会懇親会管理 · データはこの端末内に保存されます。自動バックアップはブラウザ内に保存されます。外部にも退避してください。</footer></main><script>
+</style></head><body><header><h1>委員会懇親会管理 <small>Ver.2.27</small></h1><small>日程調整から精算まで、ひとつに。</small></header><main><nav id="nav" aria-label="メインメニュー"></nav><div id="app"></div><footer>委員会懇親会管理 · データはこの端末内に保存されます。自動バックアップはブラウザ内に保存されます。外部にも退避してください。</footer></main><script>
 'use strict';const KEY='konshinkai_v1';const yen=n=>(Number(n)||0).toLocaleString('ja-JP')+'円';const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const uid=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();const currentFY=()=>{let d=new Date();return d.getFullYear()-(d.getMonth()<9?1:0)};function seed(y){return {year:y,budget:0,events:[],members:[],venues:[]}}let db;try{db=JSON.parse(localStorage.getItem(KEY))}catch{}if(!db||!Array.isArray(db.events))db=seed(currentFY());if(!db.fiscalVersion){
  const oldPattern=db.events.length===12 && db.events[0].month===4 && db.events[3].month===7;
  if(oldPattern){
@@ -169,7 +169,7 @@ const originalHome=home;home=easyHome;
 // Keep the full existing editor, but add a prominent guide and a reporting action.
 const originalEvents=events;
 events=function(){
- const e=event();const intro=e?`<section class="panel guided"><h2>今、何をすればいい？</h2><p><b>${esc(e.type)}：</b>${esc(eventNextStep(e))}</p><div class="actions"><button class="primary" onclick="printMeetingReport()">会合等開催報告書を作成</button><button onclick="printAttendanceList()">出席者名簿を印刷</button></div><p class="muted">日程や会費を変更したら、各欄の「保存」を押してください。報告書は開催情報・出席・精算の入力後に出力してください。</p></section>`:'';
+ const e=event();const intro=e?`<section class="panel guided"><h2>今、何をすればいい？</h2><p><b>${esc(e.type)}：</b>${esc(eventNextStep(e))}</p><div class="actions"><button class="primary" onclick="printMeetingReport()">会合等開催報告書を作成</button><button onclick="printAttendanceList()">当日参加者名簿（PDF・印刷）</button></div><p class="muted">日程や会費を変更したら、各欄の「保存」を押してください。報告書は開催情報・出席・精算の入力後に出力してください。</p></section>`:'';
  return intro+originalEvents();
 };
 function printDocument(title,body){
@@ -181,19 +181,20 @@ function printAttendanceList(){
  const e=event();if(!e){alert('開催を選択してください');return}
  const v=db.venues.find(x=>x.id===e.venueId),att=joined(e);
  if(att.length>20&&!confirm(`出席者は${att.length}名です。A4縦1枚は20名までを想定しています。続けますか？`))return;
- const order=m=>m.executiveRole==='委員長'?0:m.executiveRole==='副委員長'?1:m.advisor?2:m.executive?3:4;
- const members=att.slice().sort((a,b)=>order(a)-order(b)||String(a.name).localeCompare(String(b.name),'ja'));
- const group=m=>m.executiveRole==='委員長'?'委員長':m.executiveRole==='副委員長'?'副委員長':m.advisor?'アドバイザー委員':m.executive?'幹事委員':'委員';
+ const order=m=>m.executiveRole==='委員長'?0:m.executiveRole==='副委員長'?2:1;
+ const termOrder=m=>{const t=String(m.term??'').normalize('NFKC').match(/\d+/);return t?Number(t[0]):Infinity};
+ const members=att.slice().sort((a,b)=>order(a)-order(b)||(termOrder(a)-termOrder(b))||String(a.name).localeCompare(String(b.name),'ja'));
+ const group=m=>m.executiveRole==='委員長'?'委員長':m.executiveRole==='副委員長'?'副委員長':'';
  const rows=members.map(m=>`<tr><td class="role">${esc(group(m))}</td><td>${esc(m.name)}</td><td>${esc(m.company||m.note||'')}</td><td class="term">${m.term?esc(m.term)+'期':''}</td></tr>`).join('');
  const date=e.date?e.date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,(_,y,m,d)=>`${y}年${Number(m)}月${Number(d)}日`):'　年　月　日';
  const feeValues=members.map(m=>Number((e.fees||{})[m.id]||0)).filter(x=>x>0);
  const commonFee=feeValues.length===members.length&&new Set(feeValues).size===1?`${feeValues[0].toLocaleString('ja-JP')}円`:'　　　　　円';
  const term=Number(db.obogTerm)||33;
  const title=`フォーラム21 第${term}期 OB・OG部会　広報委員会`;
- const body=`<div class="sheet"><header><div class="org">${esc(title)}</div><h1>${esc(e.meetingName||e.type||'懇親会')}</h1></header><div class="details"><div><b>■ 日時：</b>${esc(date)}　${esc(e.time||'')}～</div><div><b>■ 場所：</b>${esc(v?.name||'')}</div><div class="address"><b>　住所：</b>${esc(v?.address||'')}</div><div><b>■ 会費：</b>${commonFee}</div></div><h2>■ ご出席者一覧（敬称略）</h2><table><colgroup><col style="width:20%"><col style="width:23%"><col style="width:45%"><col style="width:12%"></colgroup><thead><tr><th>区分</th><th>氏名</th><th>勤務先</th><th>期</th></tr></thead><tbody>${rows||'<tr><td colspan="4">参加予定者は未登録です</td></tr>'}</tbody></table></div>`;
+ const body=`<div class="sheet"><header><div class="org">${esc(title)}</div><h1>${esc(e.meetingName||e.type||'懇親会')}</h1></header><div class="details"><div><b>日時：</b>${esc(date)}　${esc(e.time||'')}～</div><div><b>場所：</b>${esc(v?.name||'')}</div><div class="address"><b>　住所：</b>${esc(v?.address||'')}</div><div><b>会費：</b>${commonFee}</div></div><h2>ご出席者一覧（敬称略）</h2><table><colgroup><col style="width:20%"><col style="width:23%"><col style="width:45%"><col style="width:12%"></colgroup><thead><tr><th></th><th>氏　名</th><th>勤　務　先</th><th>期</th></tr></thead><tbody>${rows||'<tr><td colspan="4">参加予定者は未登録です</td></tr>'}</tbody></table></div>`;
  const w=window.open('','_blank');if(!w){alert('ポップアップを許可してください');return}
- w.document.write(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>出席者名簿_${esc(e.date||'')}_${esc(e.type||'')}</title><style>
- @page{size:A4 portrait;margin:12mm 15mm}*{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:'Yu Gothic','Noto Sans JP',sans-serif;color:#111;font-size:10pt;line-height:1.4}.sheet{width:100%;max-width:180mm;margin:auto}.org{text-align:center;font-size:13pt;font-weight:700;letter-spacing:.02em}h1{text-align:center;font-size:16pt;margin:8mm 0 10mm}h2{font-size:11pt;margin:8mm 0 3mm}.details{font-size:10.5pt;line-height:1.8}.address{padding-left:8mm;min-height:8mm}table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border:1px solid #777;padding:1.6mm 2mm;font-size:9pt;line-height:1.25;height:8.4mm;vertical-align:middle;overflow-wrap:anywhere}th{background:#f3f3f3;text-align:center;font-weight:700}.role{font-size:8.5pt}.term{text-align:center;white-space:nowrap}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.sheet{break-inside:avoid}thead{display:table-header-group}tr{break-inside:avoid}}@media screen{body{padding:12mm;background:#e8e8e8}.sheet{background:white;padding:12mm;box-shadow:0 1px 12px #aaa;max-width:210mm;min-height:297mm}}
+ w.document.write(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc((e.date||'').replace(/-/g,''))}_出席者名簿</title><style>
+ @page{size:A4 portrait;margin:12mm 15mm}*{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:'Yu Gothic','Noto Sans JP',sans-serif;color:#111;font-size:10pt;line-height:1.4}.sheet{width:100%;max-width:180mm;margin:auto}.org{text-align:center;font-size:13pt;font-weight:700;letter-spacing:.02em}h1{text-align:center;font-size:16pt;margin:8mm 0 10mm}h2{font-size:11pt;margin:8mm 0 3mm}.details{font-size:10.5pt;line-height:1.8}.address{padding-left:8mm;min-height:8mm}table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border:1px solid #777;padding:1.6mm 2mm;font-size:9pt;line-height:1.25;height:${members.length>16?6.8:8.4}mm;vertical-align:middle;overflow-wrap:anywhere}th{background:#f3f3f3;text-align:center;font-weight:700}.role{font-size:8.5pt}.term{text-align:center;white-space:nowrap}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.sheet{break-inside:auto}thead{display:table-header-group}tr{break-inside:avoid}}@media screen{body{padding:12mm;background:#e8e8e8}.sheet{background:white;padding:12mm;box-shadow:0 1px 12px #aaa;max-width:210mm;min-height:297mm}}
  </style></head><body>${body}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),400);
 }
 async function receiptImageForPrint(r){
@@ -315,7 +316,7 @@ async function addReceipts(files){
 }
 async function deleteReceipt(id){if(!confirm('この領収書を削除しますか？'))return;const d=await receiptDB();await new Promise((resolve,reject)=>{const t=d.transaction(RECEIPT_STORE,'readwrite');t.objectStore(RECEIPT_STORE).delete(id);t.oncomplete=resolve;t.onerror=()=>reject(t.error)});d.close();refreshReceiptGallery()}
 
-// 領収書のOCR・確認・合計反映（Ver.2.26）
+// 領収書のOCR・確認・合計反映（Ver.2.27）
 async function updateReceiptFields(id,fields,verified){
  const d=await receiptDB();try{await new Promise((resolve,reject)=>{
   const tx=d.transaction(RECEIPT_STORE,'readwrite'),st=tx.objectStore(RECEIPT_STORE),req=st.get(id);
