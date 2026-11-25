@@ -3,13 +3,13 @@
 .csv-tools{border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin:14px 0;background:#f8fafc}.csv-tools p{margin:7px 0 12px}.csv-tools button,.csv-upload{display:inline-block;vertical-align:middle;width:auto;margin:4px 8px 4px 0;padding:11px 14px;border-radius:9px;border:1px solid #cbd5e1;background:white;color:#17365d;font-weight:600;cursor:pointer;font-size:14px}.csv-upload input{display:none}@media(max-width:600px){.csv-tools button,.csv-upload{display:block;width:100%;text-align:center;margin:8px 0}}
 .next-event{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #e2e8f0}.next-event button{width:auto;white-space:nowrap}.guided{border-left:5px solid #2563eb}@media(max-width:600px){.next-event{align-items:flex-start}.next-event button{padding:10px}}
 .receipt-picker{display:inline-block;background:#eaf2fc;border:1px solid #9ab9e2;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:650}.receipt-picker{position:relative;overflow:hidden}.receipt-picker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px}.receipt-gallery{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.receipt-card{width:160px;border:1px solid #ccd7e3;border-radius:10px;padding:10px;background:white;overflow-wrap:anywhere}.receipt-card img{max-width:100%;height:170px;object-fit:contain}.receipt-card button{margin-top:8px}@media(max-width:600px){.receipt-picker{width:100%;text-align:center}.receipt-card{width:calc(50% - 6px)}}.att-scroll{max-height:70vh}.att-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0}.att-table th,.att-table td{text-align:center;min-width:80px;border-right:1px solid #e8eef4}.att-table thead th{position:sticky;top:0;z-index:2;background:#eaf2f8}.att-table .att-name{position:sticky;left:0;z-index:1;min-width:135px;max-width:200px;text-align:left;background:#f6f9fc;white-space:normal}.att-table thead .att-name{z-index:3;background:#eaf2f8}.att-table .att-small{font-size:10px;font-weight:normal;color:#637c8f}.att-table .att-state{font-weight:750;font-size:17px}.att-table .att-yes{color:#16734a;background:#f0faf4}.att-table .att-no{color:#a34b4b;background:#fff6f5}.att-table .att-maybe{color:#986b17;background:#fffbec}.att-table .att-other{color:#8a99a5}.att-table .att-total{font-weight:750}.att-table .att-summary th,.att-table .att-summary td{background:#eef4f9;font-weight:750}.att-table .att-summary .att-name{z-index:1;background:#e8f0f7}.att-date{max-width:130px;white-space:normal}
-/* Ver.2.34: only the member name remains fixed during horizontal scrolling. */
+/* Ver.2.36: only the member name remains fixed during horizontal scrolling. */
 .att-table .att-meta{min-width:65px;white-space:nowrap;text-align:left;background:#fff;}
 .att-table .att-role{min-width:160px;}
 .att-table thead .att-meta{background:#eaf2f8;}
 .att-table .att-summary .att-meta{background:#e8f0f7;}
 .att-table .att-name{left:0;position:sticky;}
-</style></head><body><header><h1>委員会懇親会管理 <small>Ver.2.34</small></h1><small>日程調整から精算まで、ひとつに。</small></header><main><nav id="nav" aria-label="メインメニュー"></nav><div id="app"></div><footer>委員会懇親会管理 · データはこの端末内に保存されます。自動バックアップはブラウザ内に保存されます。外部にも退避してください。</footer></main><script>
+</style></head><body><header><h1>委員会懇親会管理 <small>Ver.2.36</small></h1><small>日程調整から精算まで、ひとつに。</small></header><main><nav id="nav" aria-label="メインメニュー"></nav><div id="app"></div><footer>委員会懇親会管理 · データはこの端末内に保存されます。自動バックアップはブラウザ内に保存されます。外部にも退避してください。</footer></main><script>
 'use strict';const KEY='konshinkai_v1';const yen=n=>(Number(n)||0).toLocaleString('ja-JP')+'円';const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const uid=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();const currentFY=()=>{let d=new Date();return d.getFullYear()-(d.getMonth()<9?1:0)};function seed(y){return {year:y,budget:0,events:[],members:[],venues:[]}}let db;try{db=JSON.parse(localStorage.getItem(KEY))}catch{}if(!db||!Array.isArray(db.events))db=seed(currentFY());if(!db.fiscalVersion){
  const oldPattern=db.events.length===12 && db.events[0].month===4 && db.events[3].month===7;
  if(oldPattern){
@@ -206,7 +206,7 @@ async function receiptImageForPrint(r){
  return await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=deg%180?im.naturalHeight:im.naturalWidth;c.height=deg%180?im.naturalWidth:im.naturalHeight;const ctx=c.getContext('2d');ctx.translate(c.width/2,c.height/2);ctx.rotate(deg*Math.PI/180);ctx.drawImage(im,-im.naturalWidth/2,-im.naturalHeight/2);resolve(c.toDataURL('image/jpeg',0.86))};im.onerror=()=>reject(Error('領収書画像を読み込めません'));im.src=src});
 }
 async function rotateReceipt(id){
- try{const e=event();const receipts=await getReceipts(e.id);const r=receipts.find(x=>x.id===id);if(!r)return;await updateReceiptFields(id,{rotation:((Number(r.rotation)||0)+270)%360},!!r.ocrVerified);await refreshReceiptGallery()}
+ try{const e=event();const receipts=await getReceipts(e.id);const r=receipts.find(x=>x.id===id);if(!r)return;await updateReceiptFields(id,{rotation:((Number(r.rotation)||0)+270)%360});await refreshReceiptGallery()}
  catch(err){alert('回転を保存できません：'+err.message)}
 }
 
@@ -319,72 +319,21 @@ async function addReceipts(files){
 }
 async function deleteReceipt(id){if(!confirm('この領収書を削除しますか？'))return;const d=await receiptDB();await new Promise((resolve,reject)=>{const t=d.transaction(RECEIPT_STORE,'readwrite');t.objectStore(RECEIPT_STORE).delete(id);t.oncomplete=resolve;t.onerror=()=>reject(t.error)});d.close();refreshReceiptGallery()}
 
-// 領収書のOCR・確認・合計反映（Ver.2.34）
-async function updateReceiptFields(id,fields,verified){
+// 領収書の画像管理（Ver.2.36）
+async function updateReceiptFields(id,fields){
  const d=await receiptDB();try{await new Promise((resolve,reject)=>{
   const tx=d.transaction(RECEIPT_STORE,'readwrite'),st=tx.objectStore(RECEIPT_STORE),req=st.get(id);
-  req.onsuccess=()=>{if(!req.result){reject(Error('領収書が見つかりません'));return}st.put({...req.result,...fields,ocrVerified:verified})};
+  req.onsuccess=()=>{if(!req.result){reject(Error('領収書が見つかりません'));return}st.put({...req.result,...fields})};
   req.onerror=()=>reject(req.error||Error('領収書を取得できません'));
   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||Error('領収書を更新できません'));tx.onabort=()=>reject(tx.error||Error('領収書の更新が中断されました'));
  })}finally{d.close()}
 }
-async function loadReceiptOCRLibrary(){
- if(window.Tesseract)return window.Tesseract;
- if(!window.__receiptOCRLoading){window.__receiptOCRLoading=new Promise((resolve,reject)=>{
-  const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-  sc.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(Error('OCRライブラリを読み込めません'));
-  sc.onerror=()=>reject(Error('OCRライブラリの取得に失敗しました。インターネット接続をご確認ください'));
-  document.head.appendChild(sc);
- }).catch(err=>{window.__receiptOCRLoading=null;throw err})}
- return window.__receiptOCRLoading;
-}
-function parseReceiptText(raw){
- const amountCandidates=[...raw.matchAll(/(?:合計|総合計|お支払(?:い)?|領収(?:金額)?|税込(?:合計)?|TOTAL)\s*[：:\s￥¥]*([\d,]{2,})/gi)];
- const amountMatch=amountCandidates.at(-1)||[...raw.matchAll(/[￥¥]\s*([\d,]{2,})/g)].at(-1);
- const amount=amountMatch?Number(amountMatch[1].replace(/,/g,'')):'';
- const date=raw.match(/(20\d{2})\s*[年\/.\-]\s*(\d{1,2})\s*[月\/.\-]\s*(\d{1,2})/);
- const lines=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
- return {shop:lines[0]||'',date:date?`${date[1]}-${date[2].padStart(2,'0')}-${date[3].padStart(2,'0')}`:'',amount:Number.isFinite(amount)?amount:'',number:''};
-}
-async function recognizeReceipt(id){
- const status=document.getElementById('ocr_'+id);if(status)status.textContent='OCRを準備中…';
- let worker;
- try{
-  const r=(await getReceipts(event().id)).find(x=>x.id===id);
-  if(!r||!r.mime.startsWith('image/'))throw Error('画像の領収書が見つかりません');
-  const t=await loadReceiptOCRLibrary();if(status)status.textContent='文字を読み取っています…';
-  worker=await t.createWorker('jpn+eng');
-  const result=await worker.recognize(r.blob);
-  const raw=result?.data?.text||'';
-  await updateReceiptFields(id,{ocrRaw:raw,ocrFields:parseReceiptText(raw)},false);
-  await refreshReceiptGallery();
-  alert('自動読取が完了しました。金額・日付・店舗名を確認・修正し、「確認して確定」を押してください。');
- }catch(err){if(status)status.textContent='OCR失敗：'+err.message;alert('自動読取ができませんでした：'+err.message)}
- finally{if(worker)try{await worker.terminate()}catch(_){}}
-}
-async function confirmReceiptOCR(id){
- const fields={};for(const key of ['shop','date','amount']){const inp=document.getElementById('ocrfield_'+id+'_'+key);if(!inp){alert('入力欄が見つかりません');return}fields[key]=inp.value.trim()}
- const amount=Number(fields.amount);if(!fields.amount||!Number.isFinite(amount)||amount<0){alert('領収書の支払金額を確認してください');return}
- fields.amount=amount;
- try{await updateReceiptFields(id,{ocrFields:fields},true);await refreshReceiptGallery();alert('領収書の内容を確定しました')}catch(err){alert('確定できませんでした：'+err.message)}
-}
-async function applyReceiptTotal(){
- const e=event();if(!e)return;
- try{
-  const list=await getReceipts(e.id),verified=list.filter(r=>r.ocrVerified&&Number.isFinite(Number(r.ocrFields?.amount)));
-  if(!verified.length){alert('確認済みの領収書がありません。OCR結果を確認・確定してください');return}
-  const total=verified.reduce((sum,r)=>sum+Number(r.ocrFields.amount),0);
-  if(Number(e.reservationUnitPrice)>0){alert('支払総額は予約単価×参加人数＋キャンセル料金で自動計算されています。領収書合計との差額を確認してください。');return}if(!confirm(`確認済み領収書 ${verified.length}件の合計 ${yen(total)} を支払総額に反映しますか？`))return;
-  update(()=>{e.cost=total;e.claimAmount=office(e)});
-  alert('支払総額に反映しました。必要に応じて「精算情報を保存」を押してください。');
- }catch(err){alert('領収書合計を反映できません：'+err.message)}
-}
-async function refreshReceiptGallery(){const el=document.getElementById('receiptGallery'),e=event();if(!el)return;if(!e){el.textContent='対象の開催を選択してください。';return;}el.textContent='領収書を確認中…';const timeout=setTimeout(()=>{if(el.textContent==='領収書を確認中…')el.textContent='読み込みに時間がかかっています。画面を再表示してください。改善しない場合はブラウザの保存領域を確認してください。';},8000);try{const list=await getReceipts(e.id);clearTimeout(timeout);if(!list.length){el.textContent='領収書はまだ登録されていません。';return}el.innerHTML='';const info=document.createElement('p');info.textContent='画像の「自動読取」→内容確認・修正→「確認して確定」の順に進めてください。OCRは初回にインターネット接続が必要です。画像はOCRサービスにアップロードせず端末内で処理します。';info.id='ocrHelp';document.getElementById('ocrHelp')?.remove();el.before(info);for(const r of list){const card=document.createElement('div');card.className='receipt-card';card.style.width='min(100%,330px)';if(r.mime.startsWith('image/')){const img=document.createElement('img');img.src=await receiptImageForPrint(r);img.onerror=()=>{img.replaceWith(document.createTextNode('この形式はプレビューできません。保存データには含まれます。'))};img.alt='領収書：'+r.name;card.appendChild(img);const rotate=document.createElement('button');rotate.textContent='左に90°回転';rotate.onclick=()=>rotateReceipt(r.id);card.appendChild(rotate);img.style.transform='none';img.style.width='100%';img.style.maxWidth='100%';img.style.height='auto';img.style.maxHeight='240px';img.style.objectFit='contain'}else{const p=document.createElement('p');p.textContent='PDF領収書（OCR対象外）';card.appendChild(p)}const label=document.createElement('div');label.textContent=r.name;card.appendChild(label);if(r.mime.startsWith('image/')){const btn=document.createElement('button');btn.textContent='自動読取（OCR）';btn.onclick=()=>recognizeReceipt(r.id);card.appendChild(btn);const status=document.createElement('p');status.id='ocr_'+r.id;status.textContent=r.ocrVerified?'確認済み':r.ocrFields?'未確認：読取結果を修正して確定してください':'未読取';card.appendChild(status);if(r.ocrFields){for(const [key,title,type] of [['shop','店舗名','text'],['date','利用日','date'],['amount','支払金額（円）','number']]){const lab=document.createElement('label');lab.textContent=title;const inp=document.createElement('input');inp.type=type;inp.id='ocrfield_'+r.id+'_'+key;inp.value=r.ocrFields[key]??'';lab.appendChild(inp);card.appendChild(lab)}const confirm=document.createElement('button');confirm.textContent=r.ocrVerified?'内容を修正して再確定':'確認して確定';confirm.onclick=()=>confirmReceiptOCR(r.id);card.appendChild(confirm);const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='OCR原文を確認';details.appendChild(summary);const pre=document.createElement('pre');pre.style.whiteSpace='pre-wrap';pre.style.fontSize='11px';pre.textContent=r.ocrRaw||'';details.appendChild(pre);card.appendChild(details)}}const del=document.createElement('button');del.textContent='削除';del.onclick=()=>deleteReceipt(r.id);card.appendChild(del);el.appendChild(card)}const action=document.createElement('div');action.style.width='100%';const sum=document.createElement('button');sum.className='primary';sum.textContent='確認済み領収書の合計を支払総額に反映';sum.onclick=applyReceiptTotal;action.appendChild(sum);el.appendChild(action)}catch(err){clearTimeout(timeout);el.textContent='読み込みに失敗しました：'+err.message}}
+async function refreshReceiptGallery(){const el=document.getElementById('receiptGallery'),e=event();if(!el)return;if(!e){el.textContent='対象の開催を選択してください。';return;}el.textContent='領収書を確認中…';const timeout=setTimeout(()=>{if(el.textContent==='領収書を確認中…')el.textContent='読み込みに時間がかかっています。画面を再表示してください。改善しない場合はブラウザの保存領域を確認してください。';},8000);try{const list=await getReceipts(e.id);clearTimeout(timeout);if(!list.length){el.textContent='領収書はまだ登録されていません。';return}el.innerHTML='';for(const r of list){const card=document.createElement('div');card.className='receipt-card';card.style.width='min(100%,330px)';if(r.mime.startsWith('image/')){const img=document.createElement('img');img.src=await receiptImageForPrint(r);img.onerror=()=>{img.replaceWith(document.createTextNode('この形式はプレビューできません。保存データには含まれます。'))};img.alt='領収書：'+r.name;card.appendChild(img);const rotate=document.createElement('button');rotate.textContent='左に90°回転';rotate.onclick=()=>rotateReceipt(r.id);card.appendChild(rotate);img.style.transform='none';img.style.width='100%';img.style.maxWidth='100%';img.style.height='auto';img.style.maxHeight='240px';img.style.objectFit='contain'}else{const p=document.createElement('p');p.textContent='PDF領収書';card.appendChild(p)}const label=document.createElement('div');label.textContent=r.name;card.appendChild(label);const del=document.createElement('button');del.textContent='削除';del.onclick=()=>deleteReceipt(r.id);card.appendChild(del);el.appendChild(card)}}catch(err){clearTimeout(timeout);el.textContent='読み込みに失敗しました：'+err.message}}
 const renderBeforeReceipt=render;render=function(){renderBeforeReceipt();if(page==='finance')refreshReceiptGallery()};
 
 render();
 
-// Ver.2.2: 完全バックアップ（IndexedDB領収書とOCR結果を含む）
+// Ver.2.2: 完全バックアップ（IndexedDB領収書を含む（旧データも保持））
 const HANDOVER_FORMAT='forum21-konshinkai-complete-backup', HANDOVER_VERSION=2;
 function handoverStatus(message){const el=document.getElementById('handoverStatus');if(el)el.textContent=message}
 async function allReceipts(){const d=await receiptDB();return new Promise((resolve,reject)=>{const tx=d.transaction(RECEIPT_STORE,'readonly'),req=tx.objectStore(RECEIPT_STORE).getAll();req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);tx.oncomplete=()=>d.close()})}
@@ -605,4 +554,23 @@ function partyWrap(s){return s.match(/.{1,76}/g)?.join('\r\n')||''}
 function partyHeader(s){return Array.from(s).reduce((a,c)=>{if(!a.length||new TextEncoder().encode(a[a.length-1]+c).length>42)a.push(c);else a[a.length-1]+=c;return a},[]).map(t=>'=?UTF-8?B?'+partyB64(t)+'?=').join('\r\n ')}
 function downloadPartyEml(){const x=partyDraft(),rows=partySelected();if(!x||!rows)return;if(!rows.length){alert('添付する写真を選択してください');return}const boundary='party_'+uid();const parts=['To: '+x.to.join(',\r\n '),'Subject: '+partyHeader(x.subject),'MIME-Version: 1.0','X-Unsent: 1','Content-Type: multipart/mixed; boundary="'+boundary+'"','','--'+boundary,'Content-Type: text/plain; charset=UTF-8','Content-Transfer-Encoding: base64','',partyWrap(partyB64(x.body))];for(const {r,url} of rows){const name=r.name.replace(/[^a-zA-Z0-9_.-]/g,'_');parts.push('--'+boundary,'Content-Type: image/jpeg; name="'+name+'"','Content-Disposition: attachment; filename="'+name+'"','Content-Transfer-Encoding: base64','',partyWrap(url.split(',')[1]))}parts.push('--'+boundary+'--','');partyDownload(new Blob([parts.join('\r\n')],{type:'message/rfc822'}),(event().date||'party').replace(/-/g,'')+'_thanks.eml')}
 </script>
+
+<script>
+// Workflow guidance: explicit confirmation for work performed outside the app.
+const guideLabels={schedule:'日程調整依頼を送信',notice:'開催案内を送信',roster:'当日名簿を準備',actual:'当日の出欠・会費を確定',photos:'写真を整理（写真なしの場合も確認）',thanks:'参加者へのお礼メールを送信',report:'開催報告書・証憑を確認',claim:'事務局への請求メールを送信'};
+function guideToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function guideTasks(e,counts={}){const g=e.guideDone||{},c=attendeeCounts(e),past=!!e.date&&e.date<guideToday()||['開催済み','精算申請中','精算完了'].includes(e.status),closed=!!e.settledDate||e.status==='精算完了';const t=[];const add=(key,label,done,page,anchor,manual=false)=>t.push({key,label,done:!!done,page,anchor,manual});
+if(!past){add('url','調整さんURL・回答期限を登録',e.scheduleUrl&&e.deadline,'events','scheduleUrl');add('schedule',guideLabels.schedule,g.schedule,'events','mailType',true);add('date','開催日・開始時刻を確定',e.date&&e.time,'events','date');add('venue','店舗・予約単価を登録',e.venueId&&Number(e.reservationUnitPrice)>0,'events','venueId');add('notice',guideLabels.notice,g.notice,'events','mailType',true);add('roster',guideLabels.roster,g.roster,'events','attendanceTotals',true);}
+if(past||e.date===guideToday()){add('actual',guideLabels.actual,g.actual,'events','attendanceTotals',true);add('photos',guideLabels.photos,g.photos,'events','partyGallery',true);add('thanks',guideLabels.thanks,g.thanks,'events','partyGallery',true);add('payment','支払額・立替者・支払日を確認',e.paymentDate&&e.paidBy&&Number(e.cost)>0,'finance','cost');add('receipt','領収書・証憑を登録',counts.receipts>0,'finance','receiptGallery');add('report',guideLabels.report,g.report,'finance','reportMeetingName',true);add('claim',guideLabels.claim,g.claim||e.claimDate,'finance','claimDate',true);add('claimDate','事務局請求日を登録',e.claimDate,'finance','claimDate');add('settle','事務局からの入金・精算完了日を登録',e.settledDate,'finance','settledDate');}
+return closed?t.filter(x=>!['actual','photos','thanks','report','claim','receipt','payment','claimDate','settle'].includes(x.key)||x.done||x.key==='settle'):t;}
+let guideCounts={};
+function guideJump(id,p,a){if(id)selected=id;go(p);requestAnimationFrame(()=>{const el=$(a);if(el){el.scrollIntoView({block:'center'});if(el.matches('input,select,textarea'))el.focus({preventScroll:true});}})}
+function guideMark(key,checked){const e=event();if(!e)return;update(()=>{e.guideDone=e.guideDone||{};e.guideDone[key]=checked;});}
+function guideRows(e,all=false){const tasks=guideTasks(e,guideCounts[e.id]),left=tasks.filter(t=>!t.done);return `<div class="guide-progress">${tasks.length-left.length} / ${tasks.length} 件確認済み</div>${(all?tasks:left).map(t=>`<div class="guide-row"><div>${t.manual?`<label><input type="checkbox" ${t.done?'checked':''} onchange="guideMark('${t.key}',this.checked)"> ${esc(t.label)}</label>`:`<span>${t.done?'✓':'○'} ${esc(t.label)}</span>`}</div><button onclick="guideJump('${esc(e.id)}','${t.page}','${t.anchor}')">${t.done?'確認':'対応する'}</button></div>`).join('')||'<p>現在の未完了タスクはありません。</p>'}`}
+function guideHome(){const all=sortedEvents(),missing=[['懇親会係の苗字',db.organizerSurname,'organizerSurname'],['幹事メーリングリスト',db.executiveEmail,'executiveEmail'],['委員メーリングリスト',db.committeeEmail,'committeeEmail'],['振込先',db.bankNumber&&db.bankHolder&&db.bankBranch,'bankBranch']].filter(x=>!x[1]);return `<section class="welcome"><div><span class="eyebrow">${esc(db.year)}年度 ／ ${esc(db.obogTerm)}期</span><h2>懇親会係のやることリスト</h2><p>未完了の仕事から直接、入力・確認画面に進めます。</p></div><button class="primary" onclick="go('events')">開催を追加・管理</button></section><div class="grid"><div class="metric">開催登録<b>${all.length}件</b></div><div class="metric">予算残額（見込含む）<b>${yen(db.budget-spent())}</b></div></div><section class="panel"><h2>年度初め・引継ぎ</h2>${missing.map(([label,_,a])=>`<div class="guide-row"><span>${label}を登録</span><button onclick="guideJump('','settings','${a}')">設定する</button></div>`).join('')}${!db.members.length?'<div class="guide-row">委員名簿を登録<button onclick="go(\'members\')">登録する</button></div>':''}<p class="muted">前任者の完全データを受け取った場合は、設定・引継ぎから取り込んでください。年度末は完全データを出力し、後任者に渡します。</p><button onclick="go('settings')">引継ぎ・データ管理</button></section>${all.map(e=>`<section class="panel"><h2>${esc(mailEventName(e))}</h2><p>${esc(e.date||'日程未確定')} ／ ${esc(e.status)}${e.deadline?' ／ 回答期限 '+esc(e.deadline):''}${e.cancelDeadline?' ／ キャンセル期限 '+esc(e.cancelDeadline):''}</p>${guideRows(e)}<button onclick="guideJump('${esc(e.id)}','events','eventChoice')">開催の詳細・全タスク</button></section>`).join('')||'<section class="panel"><h2>最初の開催を登録しましょう</h2><button onclick="go(\'events\')">開催を追加</button></section>'}<p class="muted">メール送信・予約・入金は外部で行うため、実際に完了したことを確認して記録してください。</p>`}
+const guideOldEvents=events;events=function(){const e=event();return (e?`<section class="panel guided"><h2>この開催のチェックリスト</h2>${guideRows(e,true)}<p class="muted">チェックは実際に作業が完了してから付けてください。</p></section>`:'')+guideOldEvents()};home=guideHome;
+const guideOldRender=render;let guideRun=0;render=function(){guideOldRender();const run=++guideRun;if(!['home','events'].includes(page))return;const current=page;Promise.all(db.events.map(async e=>{try{return [e.id,{receipts:(await getReceipts(e.id)).length}]}catch{return [e.id,{}]}})).then(rows=>{if(run!==guideRun||page!==current)return;const next=Object.fromEntries(rows);if(JSON.stringify(next)!==JSON.stringify(guideCounts)){guideCounts=next;if(current==='home')guideOldRender();else {const panel=document.querySelector('.guided');if(panel&&event())panel.innerHTML=`<h2>この開催のチェックリスト</h2>${guideRows(event(),true)}<p class="muted">実際に完了した作業を確認してください。</p>`;}}})};
+render();
+</script>
+<style>.guide-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #dce5ed;padding:10px 0}.guide-row button{width:auto;flex-shrink:0}.guide-row input[type=checkbox]{width:auto;margin-right:6px}.guide-row label{margin:0}.guide-progress{font-weight:bold;color:#245c80;margin:8px 0}</style>
 </body></html>
